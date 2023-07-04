@@ -1,8 +1,10 @@
 class Todo {
-
   String todoTitle;
   String todoSubtitle;
   bool todoStatus;
 
-  Todo(this.todoTitle, this.todoSubtitle, this.todoStatus);
+  Todo(
+      {required this.todoTitle,
+      required this.todoSubtitle,
+      this.todoStatus = false});
 }
