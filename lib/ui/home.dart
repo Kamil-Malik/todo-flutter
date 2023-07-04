@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todoapp/ui/detail_screen.dart';
 
 import '../model/todos_model.dart';
 
@@ -28,6 +29,8 @@ class _MyHomePageState extends State<MyHomePage> {
           return AlertDialog(
             title: const Text('Add new Todo'),
             content: IntrinsicHeight(
+                child: SizedBox(
+              width: double.maxFinite,
               child: Column(
                 children: [
                   TextField(
@@ -52,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   )
                 ],
               ),
-            ),
+            )),
             actions: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -106,10 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     decoration:
                         todo.todoStatus ? TextDecoration.lineThrough : null,
                     decorationColor: Colors.black)),
-            subtitle: Text(
-              todo.todoSubtitle,
-              softWrap: true,
-            ),
             leading: IconButton(
               tooltip: 'Todo Status',
               icon: Icon(todo.todoStatus ? Icons.check : Icons.close,
@@ -128,7 +127,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 _todos.remove(todo);
               }),
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailScreen(
+                            todo: todo,
+                          )));
+            },
             contentPadding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
           );
         },
