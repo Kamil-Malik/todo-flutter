@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todoapp/ui/add_todo.dart';
 import 'package:todoapp/ui/detail_screen.dart';
 
 import '../model/todos_model.dart';
@@ -19,77 +20,14 @@ class _MyHomePageState extends State<MyHomePage> {
         todoSubtitle: 'Prepare every needs for work including coffee')
   ];
 
-  _showDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          TextEditingController titleController = TextEditingController();
-          TextEditingController subtitleController = TextEditingController();
-
-          return AlertDialog(
-            title: const Text('Add new Todo'),
-            content: IntrinsicHeight(
-                child: SizedBox(
-              width: double.maxFinite,
-              child: Column(
-                children: [
-                  TextField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                          hintText: 'Todo Title',
-                          icon: Icon(Icons.title),
-                          label: Text('Insert Todo Title'),
-                          border: OutlineInputBorder())),
-                  const SizedBox(height: 16),
-                  TextField(
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    controller: subtitleController,
-                    decoration: const InputDecoration(
-                        hintText: 'Todo Subtitles',
-                        icon: Icon(Icons.subtitles),
-                        label: Text('Insert Todo Subtitle'),
-                        border: OutlineInputBorder()),
-                  )
-                ],
-              ),
-            )),
-            actions: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  FilledButton(
-                      onPressed: () {
-                        setState(() {
-                          _todos.add(Todo(
-                              todoTitle: titleController.text,
-                              todoSubtitle: subtitleController.text));
-                        });
-                        Navigator.of(context).pop();
-                      },
-                      style: FilledButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          surfaceTintColor: Colors.white),
-                      child: const Text('Add Todo')),
-                  FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: FilledButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                        surfaceTintColor:
-                            Theme.of(context).colorScheme.onError),
-                    child: const Text('Cancel'),
-                  )
-                ],
-              )
-            ],
-            icon: const Icon(Icons.task),
-          );
-        });
+  _addTodo() async {
+    final result = await showDialog(
+        context: context, builder: (context) => const AddTodo());
+    if (result.todoTitle.isEmpty || result.todoSubtitle.isEmpty) {
+      return;
+    } else {
+      setState(() => _todos.add(result));
+    }
   }
 
   @override
@@ -113,9 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
               tooltip: 'Todo Status',
               icon: Icon(todo.todoStatus ? Icons.check : Icons.close,
                   color: todo.todoStatus ? Colors.green : Colors.red),
-              onPressed: () => setState(() {
-                _todos[index].todoStatus = todo.todoStatus ? false : true;
-              }),
+              onPressed: () => setState(
+                  () => todo.todoStatus = todo.todoStatus ? false : true),
             ),
             trailing: IconButton(
               tooltip: 'Delete Todo',
@@ -123,9 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Icons.delete,
                 color: Colors.redAccent,
               ),
-              onPressed: () => setState(() {
-                _todos.remove(todo);
-              }),
+              onPressed: () => setState(() => _todos.remove(todo)),
             ),
             onTap: () {
               Navigator.push(
@@ -143,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showDialog(),
+        onPressed: _addTodo,
         tooltip: 'Add new Todo',
         child: const Icon(Icons.add),
       ),
